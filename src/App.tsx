@@ -13,6 +13,7 @@ function ImageModal({
   players,
   currentIndex,
   onChangePlayer,
+  sold,setPlayers
 }: ModalProps) {
   if (!isOpen) return null;
 
@@ -25,7 +26,9 @@ function ImageModal({
     const newIndex = (currentIndex + 1) % players.length;
     onChangePlayer(newIndex);
   };
-
+  const handleUpdate=()=>{
+    localStorage.setItem("data",JSON.stringify(players))
+  }
   return (
     <div className="fixed h-screen w-screen inset-0 bg-black  z-50 flex items-center justify-center p-4">
       <div className="relative max-w-7xl w-full">
@@ -59,16 +62,45 @@ function ImageModal({
         >
           ▶
         </button>
-
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white bg-opacity-90 rounded-lg p-4 shadow-lg">
-          <p className="text-gray-800 text-xl font-semibold">{playerName}</p>
-          <p className="text-gray-600 text-lg mt-1">
-            <span className="font-semibold">Hostel:</span> {playerHostel}
-          </p>
-          <p className="text-gray-600 text-lg mt-1">
-            <span className="font-semibold">Experience:</span> {playerExp}
-          </p>
-        </div>
+          
+        {!sold ? (
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white bg-opacity-90 rounded-lg p-4 shadow-lg">
+            <p className="text-gray-800 text-xl font-semibold">{playerName}</p>
+            <p className="text-gray-600 text-lg mt-1">
+              <span className="font-semibold">Hostel:</span> {playerHostel}
+            </p>
+            <p className="text-gray-600 text-lg mt-1">
+              <span className="font-semibold">Experience:</span> {playerExp}
+            </p>
+            <button
+              onClick={() => {
+          const updatedPlayers = [...players];
+          updatedPlayers[currentIndex].sold = true;
+          setPlayers(updatedPlayers); // Update state with new array
+          onChangePlayer(currentIndex); // Trigger re-render
+          console.log(players[currentIndex].sold )
+          handleUpdate();
+              }}
+              className="mt-2 bg-white text-red-500 font-semibold px-4 py-2 rounded-lg shadow-md hover:bg-gray-100"
+            >
+              Mark as Sold
+            </button>
+           
+          </div>
+        ) : (
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-red-500 bg-opacity-90 rounded-lg p-4 shadow-lg">
+            <p className="text-white text-6xl font-semibold">Sold</p>
+            <button    onClick={() => {
+          const updatedPlayers = [...players];
+          updatedPlayers[currentIndex].sold = false;
+          setPlayers(updatedPlayers); // Update state with new array
+          onChangePlayer(currentIndex); // Trigger re-render
+          console.log(players[currentIndex].sold )
+          handleUpdate();
+              }}   className="mt-2 flex  bg-white text-red-500 font-semibold px-4 py-2 rounded-lg shadow-md hover:bg-gray-100">Unsell</button>
+            
+          </div>
+        )}
       </div>
     </div>
   );
@@ -101,7 +133,8 @@ function App() {
         hostel: row['Hostel'] || '',
         experience: row['Experience'] || '',
         degree: row['Degree'] || '',
-        photo:getGoogleDriveImageUrl(row["Photo "]) || ''
+        photo:getGoogleDriveImageUrl(row["Photo "]) || '',
+        sold:false
       }));
       console.log(formattedPlayers)
 
@@ -230,6 +263,8 @@ function App() {
     players={players}
     currentIndex={selectedPlayerIndex}
     onChangePlayer={setSelectedPlayerIndex}
+    sold={players[selectedPlayerIndex].sold}
+    setPlayers={setPlayers}
   />
 )}
 
