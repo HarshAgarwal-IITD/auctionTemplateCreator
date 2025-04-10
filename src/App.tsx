@@ -11,6 +11,7 @@ function ImageModal({
   playerHostel,
   playerExp,
   players,
+  playerBase,
   currentIndex,
   onChangePlayer,
   sold,setPlayers
@@ -65,13 +66,17 @@ function ImageModal({
           
         {!sold ? (
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white bg-opacity-90 rounded-lg p-4 shadow-lg">
-            <p className="text-gray-800 text-xl font-semibold">{playerName}</p>
+            <p className="text-gray-800 text-xl font-semibold text-center">{playerName}</p>
+            <p className="text-gray-800 text-xl font-semibold text-center">BASE PRICE: {playerBase}</p>
+             
             <p className="text-gray-600 text-lg mt-1">
               <span className="font-semibold">Hostel:</span> {playerHostel}
             </p>
+           
             <p className="text-gray-600 text-lg mt-1">
               <span className="font-semibold">Experience:</span> {playerExp}
             </p>
+            <div className='flex justify-center'>
             <button
               onClick={() => {
           const updatedPlayers = [...players];
@@ -85,11 +90,13 @@ function ImageModal({
             >
               Mark as Sold
             </button>
+            </div>
            
           </div>
         ) : (
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-red-500 bg-opacity-90 rounded-lg p-4 shadow-lg">
             <p className="text-white text-6xl font-semibold">Sold</p>
+            <div className='flex justify-center'>
             <button    onClick={() => {
           const updatedPlayers = [...players];
           updatedPlayers[currentIndex].sold = false;
@@ -98,6 +105,7 @@ function ImageModal({
           console.log(players[currentIndex].sold )
           handleUpdate();
               }}   className="mt-2 flex  bg-white text-red-500 font-semibold px-4 py-2 rounded-lg shadow-md hover:bg-gray-100">Unsell</button>
+              </div>
             
           </div>
         )}
@@ -131,10 +139,11 @@ function App() {
       const formattedPlayers: Player[] = jsonData.map(row => ({
         name: row['Name'] || '',
         hostel: row['Hostel'] || '',
-        experience: row['Experience'] || '',
+        experience: (row['Experience'] || '').slice(0, 50),
         degree: row['Degree'] || '',
-        photo:getGoogleDriveImageUrl(row["Photo "]) || '',
-        sold:false
+        photo: getGoogleDriveImageUrl(row["Photo "] || ''),
+        sold: false,
+        base: row['BASE PRICE'] || ''
       }));
       console.log(formattedPlayers)
 
@@ -242,6 +251,9 @@ function App() {
                 <p className="text-gray-600 mb-2">
                   <span className="font-semibold">Degree:</span> {player.degree}
                 </p>
+                <p className="text-gray-600 mb-2">
+                  <span className="font-semibold">BASE:</span> {player.base}
+                </p>
                 <div className="mt-4">
                   <h4 className="font-semibold text-gray-700 mb-2">Basketball Experience:</h4>
                   <p className="text-gray-600">{player.experience}</p>
@@ -260,6 +272,7 @@ function App() {
     playerName={players[selectedPlayerIndex].name}
     playerHostel={players[selectedPlayerIndex].hostel}
     playerExp={players[selectedPlayerIndex].experience}
+    playerBase={players[selectedPlayerIndex].base}
     players={players}
     currentIndex={selectedPlayerIndex}
     onChangePlayer={setSelectedPlayerIndex}

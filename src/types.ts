@@ -4,7 +4,8 @@ export interface Player {
   experience: string;
   degree: string;
   photo: string;
-  sold:boolean
+  sold:boolean;
+  base:string
 }
 
 export interface ModalProps {
@@ -18,5 +19,6 @@ export interface ModalProps {
   currentIndex: number;
   onChangePlayer: (index: number) => void;
   sold:boolean;
-  setPlayers:Function
+  setPlayers:Function;
+  playerBase:string
 }
